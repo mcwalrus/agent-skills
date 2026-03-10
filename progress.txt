@@ -8,6 +8,15 @@
 
 ---
 
+## 2026-03-11 - US-007
+- What was implemented: writeClaudeMd() in adapters/claude.ts — filters sources by claude/all targets, builds delimited sections using <!-- agent-skills:start/end:<slug> --> tags, replaces existing sections or appends new ones, preserves all content outside delimiters
+- Files changed: src/adapters/claude.ts, tests/claude.test.ts
+- **Learnings for future iterations:**
+  - Section replace logic: find start/end tag indices, slice around them to replace in-place
+  - Append logic: normalize trailing newline before appending new section
+  - slug = kebab-case of basename without extension (same helper as cursor.ts)
+---
+
 ## 2026-03-11 - US-006
 - What was implemented: writeCursorRules() in adapters/cursor.ts — filters sources by cursor/all targets, converts filename to kebab-case, serializes YAML frontmatter with js-yaml (description + alwaysApply: true), writes .mdc files to outDir (creating it if needed)
 - Files changed: src/adapters/cursor.ts, tests/cursor.test.ts
