@@ -8,6 +8,15 @@
 
 ---
 
+## 2026-03-11 - US-012
+- What was implemented: cli.ts using commander — registers init/sync/check/validate/help subcommands with correct flags; index.ts re-exports all run* functions; build script updated to chmod +x dist/cli.js; TypeScript preserves shebang #!/usr/bin/env node
+- Files changed: src/cli.ts, src/index.ts, package.json
+- **Learnings for future iterations:**
+  - TypeScript (NodeNext) preserves the shebang line at the top of cli.ts — no separate postbuild sed step needed
+  - chmod +x appended to build script: `"build": "tsc && chmod +x dist/cli.js"`
+  - commander's `help [command]` syntax registers a subcommand that receives the command name as positional arg
+---
+
 ## 2026-03-11 - US-011
 - What was implemented: runHelp(command?) in commands/help.ts — prints summary of all commands when called with no arg, prints detailed help per-command when given a name, prints error for unknown commands
 - Files changed: src/commands/help.ts
