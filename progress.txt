@@ -8,6 +8,15 @@
 
 ---
 
+## 2026-03-11 - US-005
+- What was implemented: runValidate() in commands/validate.ts — reads .md files from ~/.agent-skills/{skills,rules,suggestions}/, parses with gray-matter, checks for unknown keys, invalid type/targets values, missing targets (warning only), and empty body. Returns { valid, errors } where warnings don't affect valid flag.
+- Files changed: src/commands/validate.ts, tests/validate.test.ts
+- **Learnings for future iterations:**
+  - ValidationError warnings use `message.startsWith('Warning:')` convention to distinguish from real errors
+  - `fs.readdir` wrapped in try/catch returns [] when directory doesn't exist — safe for missing subdirs
+  - Tests write real files to ~/.agent-skills/skills/ and clean up after each test case
+---
+
 ## 2026-03-11 - US-004
 - What was implemented: Verified that the --guide flag behavior was already fully implemented during US-003. GUIDE_CONTENT constant in init.ts covers all required sections (skills/rules/suggestions, source file format, Cursor .mdc format, Claude CLAUDE.md format, worked examples). No new code needed.
 - Files changed: prd.json (marked passes: true)
