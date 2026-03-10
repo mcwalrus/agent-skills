@@ -9,7 +9,7 @@
     "agent-skills": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && chmod +x dist/cli.js",
     "test": "jest",
     "lint": "eslint src tests",
     "format": "prettier --write src tests",
