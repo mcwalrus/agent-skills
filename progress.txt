@@ -1,0 +1,16 @@
+## Codebase Patterns
+- types.ts, hasher.ts, lockfile.ts are in src/ (not src/utils/)
+- Tests use Jest with ts-jest; test files in tests/ directory (not src/__tests__)
+- ts-jest warns about NodeNext module kind without isolatedModules; this is just a warning, not an error
+- Build uses `tsc` directly; dist/ contains compiled output
+
+---
+
+## 2026-03-11 - US-002
+- What was implemented: Added hashString tests to validate.test.ts; types.ts and hasher.ts were already correctly implemented from scaffold
+- Files changed: tests/validate.test.ts
+- **Learnings for future iterations:**
+  - types.ts and hasher.ts were already fully implemented in the scaffold (US-001)
+  - validate.test.ts had a placeholder test that needed replacing with real hashString tests
+  - ts-jest gives a TS151002 warning about NodeNext module kind — this is expected and not blocking
+---
