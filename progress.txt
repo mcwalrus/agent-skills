@@ -8,6 +8,15 @@
 
 ---
 
+## 2026-03-11 - US-006
+- What was implemented: writeCursorRules() in adapters/cursor.ts — filters sources by cursor/all targets, converts filename to kebab-case, serializes YAML frontmatter with js-yaml (description + alwaysApply: true), writes .mdc files to outDir (creating it if needed)
+- Files changed: src/adapters/cursor.ts, tests/cursor.test.ts
+- **Learnings for future iterations:**
+  - Test imports use bare module path (no .js extension) matching validate.test.ts pattern
+  - Tests use tmp dirs (os.tmpdir() + mkdtemp) and clean up in afterEach
+  - yaml.dump() for frontmatter produces "key: value\n" format; wrap with `---\n${fm}---\n` for .mdc files
+---
+
 ## 2026-03-11 - US-005
 - What was implemented: runValidate() in commands/validate.ts — reads .md files from ~/.agent-skills/{skills,rules,suggestions}/, parses with gray-matter, checks for unknown keys, invalid type/targets values, missing targets (warning only), and empty body. Returns { valid, errors } where warnings don't affect valid flag.
 - Files changed: src/commands/validate.ts, tests/validate.test.ts
