@@ -1,0 +1,245 @@
+{
+  "project": "agent-skills",
+  "branchName": "ralph/agent-skills-cli",
+  "description": "Lightweight npm CLI that syncs a single set of skills/rules/suggestions to Cursor (.mdc files) and Claude Code (CLAUDE.md) from a unified Markdown source format.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Project scaffold",
+      "description": "As a developer, I need the full TypeScript project structure in place so all subsequent stories have a working build and test environment to build on.",
+      "acceptanceCriteria": [
+        "package.json created with name 'agent-skills', version '0.1.0', type 'module', license 'MIT'",
+        "Dependencies include: gray-matter, js-yaml, commander",
+        "DevDependencies include: typescript, jest, ts-jest, @types/jest, eslint, prettier, @types/node, @types/js-yaml",
+        "jest.config.ts created using ts-jest preset: { preset: 'ts-jest', testEnvironment: 'node' }",
+        "tsconfig.json configured with strict: true, target: ES2022, module: NodeNext, outDir: dist",
+        "eslint.config.js configured for TypeScript",
+        ".prettierrc created with sensible defaults",
+        "src/ directory created with empty cli.ts, index.ts, types.ts, hasher.ts, lockfile.ts",
+        "src/commands/ directory created with empty init.ts, sync.ts, check.ts, validate.ts, help.ts",
+        "src/adapters/ directory created with empty cursor.ts, claude.ts",
+        "tests/ directory created with empty cursor.test.ts, claude.test.ts, lockfile.test.ts, validate.test.ts",
+        "npm run build (tsc) exits with code 0",
+        "npm run test (jest) exits with code 0",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Shared types and hasher utility",
+      "description": "As a developer, I need shared TypeScript types and a SHA-256 file hasher so all other modules have a common contract and hashing primitive.",
+      "acceptanceCriteria": [
+        "types.ts exports: SourceFile { path, type, name, description, targets, content }, LockEntry { sourcePath, sourceHash, outputPath, outputHash, timestamp }, Lockfile { entries: LockEntry[] }, TargetValue ('cursor' | 'claude' | 'all'), TypeValue ('skill' | 'rule' | 'suggestion')",
+        "hasher.ts exports hashFile(filePath: string): Promise<string> using Node crypto SHA-256",
+        "hasher.ts exports hashString(content: string): string for in-memory hashing",
+        "Tests in validate.test.ts cover hashString producing consistent output using Jest (describe/it/expect)",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Init command — directory and config setup",
+      "description": "As a developer, I want to run `agent-skills init` so that my ~/.agent-skills/ directory is created with the correct structure and a starter config.json.",
+      "acceptanceCriteria": [
+        "commands/init.ts implements runInit(options: { guide?: boolean, force?: boolean }): Promise<void>",
+        "Creates ~/.agent-skills/ if it does not exist",
+        "Creates ~/.agent-skills/skills/, rules/, suggestions/ subdirectories",
+        "Creates ~/.agent-skills/config.json with { version: 1, targets: ['cursor', 'claude'] } if not present; does not overwrite without --force",
+        "Prints a summary of what was created (e.g. '✓ Created ~/.agent-skills/skills/')",
+        "Function throws with a descriptive message on filesystem errors",
+        "Typecheck passes"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Init --guide flag — generate GUIDE.md",
+      "description": "As a developer, I want `agent-skills init --guide` to write a GUIDE.md so I have a reference for the source file format and each agent's native format.",
+      "acceptanceCriteria": [
+        "When options.guide is true, runInit writes ~/.agent-skills/GUIDE.md",
+        "GUIDE.md contains a section explaining skills vs rules vs suggestions with one example each",
+        "GUIDE.md contains a section documenting the source file format: Markdown with YAML frontmatter fields (type, name, description, targets)",
+        "GUIDE.md contains a section on Cursor .mdc output format (description and alwaysApply frontmatter fields)",
+        "GUIDE.md contains a section on Claude Code CLAUDE.md output format (agent-skills:start/end HTML comment delimiters)",
+        "GUIDE.md contains a worked example source file and its two generated outputs",
+        "Does not overwrite existing GUIDE.md unless --force is passed",
+        "Typecheck passes"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Validate command",
+      "description": "As a developer, I want `agent-skills validate` to check my source files for format errors so I get fast feedback before syncing.",
+      "acceptanceCriteria": [
+        "commands/validate.ts exports runValidate(): Promise<{ valid: boolean; errors: ValidationError[] }>",
+        "ValidationError has shape: { file: string; line?: number; message: string }",
+        "Reads all .md files from ~/.agent-skills/skills/, rules/, suggestions/ using gray-matter",
+        "Reports error for files with unknown frontmatter keys (keys outside: type, name, description, targets)",
+        "Reports error for files with invalid type value (not 'skill' | 'rule' | 'suggestion')",
+        "Reports error for files with invalid targets value (not 'cursor' | 'claude' | 'all')",
+        "Reports warning (not error) for files missing targets field — does not block sync",
+        "Reports error for files with empty body (no content beyond frontmatter)",
+        "Returns { valid: true, errors: [] } when all files pass",
+        "Tests in validate.test.ts cover: valid file, unknown key, invalid type, invalid targets, empty body, missing targets warning",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Cursor adapter — generate .mdc files",
+      "description": "As a developer, I want the Cursor adapter to translate source files into valid .mdc files so Cursor picks them up under .cursor/rules/.",
+      "acceptanceCriteria": [
+        "adapters/cursor.ts exports writeCursorRules(sources: SourceFile[], outDir: string): Promise<string[]> returning list of written file paths",
+        "Skips SourceFiles where targets is not 'cursor' or 'all'",
+        "Output filename is kebab-case of the source filename (without extension), e.g. my-skill.md → my-skill.mdc",
+        "Output file starts with YAML frontmatter block containing description (from source frontmatter or empty string) and alwaysApply: true",
+        "YAML frontmatter is serialized using js-yaml (not hand-rolled strings)",
+        "Output file body is the source Markdown content (unchanged)",
+        "Creates outDir if it does not exist",
+        "Overwrites existing .mdc files",
+        "Tests in cursor.test.ts cover: cursor target, all target, non-cursor target skipped, kebab-case filename, frontmatter correctness",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Claude adapter — merge into CLAUDE.md",
+      "description": "As a developer, I want the Claude adapter to merge generated sections into CLAUDE.md without destroying manually written content.",
+      "acceptanceCriteria": [
+        "adapters/claude.ts exports writeClaudeMd(sources: SourceFile[], claudeMdPath: string): Promise<void>",
+        "Skips SourceFiles where targets is not 'claude' or 'all'",
+        "Each source file is written as a section delimited by <!-- agent-skills:start:<slug> --> and <!-- agent-skills:end:<slug> --> where slug is the kebab-case filename",
+        "Re-running replaces only the delimited sections; all content outside delimiters is preserved verbatim",
+        "If CLAUDE.md does not exist, creates it with only the generated sections",
+        "Generated section header inside the delimiters is a level-2 heading using source name or filename",
+        "Tests in claude.test.ts cover: new file creation, section replacement on re-run, manual content preserved, multiple sources, non-claude target skipped",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Lockfile module",
+      "description": "As a developer, I need a lockfile module that reads and writes agent-skills.lock so sync and check have a shared persistence layer.",
+      "acceptanceCriteria": [
+        "lockfile.ts exports readLockfile(path: string): Promise<Lockfile | null> — returns null if file does not exist",
+        "lockfile.ts exports writeLockfile(path: string, data: Lockfile): Promise<void>",
+        "Lockfile JSON is pretty-printed with JSON.stringify(data, null, 2)",
+        "Keys within each LockEntry are written in stable order: sourcePath, sourceHash, outputPath, outputHash, timestamp",
+        "timestamp is ISO 8601 string (new Date().toISOString())",
+        "Tests in lockfile.test.ts cover: write then read round-trip, null on missing file, stable key order",
+        "Typecheck passes",
+        "Tests pass"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Sync command",
+      "description": "As a developer, I want `agent-skills sync` to validate, translate, and write all output files plus update agent-skills.lock in the current working directory.",
+      "acceptanceCriteria": [
+        "commands/sync.ts exports runSync(cwd: string): Promise<void>",
+        "Calls runValidate() first; if errors exist, prints each error and throws without writing any output files",
+        "Reads all source files from ~/.agent-skills/skills/, rules/, suggestions/ using gray-matter",
+        "Calls writeCursorRules() with outDir = path.join(cwd, '.cursor/rules')",
+        "Calls writeClaudeMd() with claudeMdPath = path.join(cwd, 'CLAUDE.md')",
+        "For each input→output pair, hashes source file and output file using hashFile()",
+        "Writes agent-skills.lock to path.join(cwd, 'agent-skills.lock') with all LockEntry records",
+        "Prints a summary: count of .mdc files written, whether CLAUDE.md was updated, lockfile path",
+        "Typecheck passes"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Check command — CI enforcement",
+      "description": "As a developer, I want `agent-skills check` to compare current file hashes against agent-skills.lock so CI fails when output files are out of sync.",
+      "acceptanceCriteria": [
+        "commands/check.ts exports runCheck(cwd: string): Promise<{ inSync: boolean; diffs: SyncDiff[] }>",
+        "SyncDiff has shape: { file: string; reason: 'source-changed' | 'output-missing' | 'output-modified' }",
+        "If agent-skills.lock does not exist: prints \"No agent-skills.lock found. Run `agent-skills sync` first.\" and returns inSync: false",
+        "For each LockEntry: re-hashes sourcePath and outputPath using hashFile()",
+        "Reports 'source-changed' if current source hash !== stored sourceHash",
+        "Reports 'output-missing' if output file does not exist",
+        "Reports 'output-modified' if current output hash !== stored outputHash",
+        "If inSync: prints \"All files are in sync.\"",
+        "If not inSync: prints each diff with filename and reason",
+        "CLI exits with code 0 when inSync, code 1 when not",
+        "Typecheck passes"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-011",
+      "title": "Help command",
+      "description": "As a developer, I want `agent-skills help` to print command documentation to stdout so I can quickly reference usage without reading docs.",
+      "acceptanceCriteria": [
+        "commands/help.ts exports runHelp(command?: string): void",
+        "With no argument, prints usage summary for all commands: init, sync, check, validate, help",
+        "Each command entry shows: name, one-line description, flags/options, example invocation",
+        "runHelp('init') prints detailed help for init including --guide and --force flags",
+        "runHelp('sync') prints detailed help for sync",
+        "runHelp('check') prints detailed help for check with CI usage example",
+        "runHelp('validate') prints detailed help for validate",
+        "runHelp('help') prints help for help",
+        "Unknown command name prints error and lists valid commands",
+        "Typecheck passes"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-012",
+      "title": "CLI entrypoint and npm package wiring",
+      "description": "As a developer, I want a complete CLI entrypoint so the tool works as `agent-skills <cmd>` whether installed globally, as a dev dependency, or via npx.",
+      "acceptanceCriteria": [
+        "cli.ts uses commander to register subcommands: init, sync, check, validate, help",
+        "cli.ts has shebang line #!/usr/bin/env node as first line of compiled output (add to src via tsconfig or package.json build step)",
+        "init command wires --guide and --force flags to runInit()",
+        "sync command calls runSync(process.cwd())",
+        "check command calls runCheck(process.cwd()) and calls process.exit(1) if not inSync",
+        "validate command calls runValidate() and calls process.exit(1) if not valid",
+        "help command calls runHelp() or runHelp(subcommand)",
+        "package.json bin field: { \"agent-skills\": \"./dist/cli.js\" }",
+        "package.json main field: \"./dist/index.js\"",
+        "package.json scripts include: build, test (jest), lint, format, prepublishOnly: \"npm run build\"",
+        "index.ts re-exports runSync, runCheck, runValidate, runInit for programmatic use",
+        "npm run build produces dist/cli.js with executable permissions",
+        "Typecheck passes"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
