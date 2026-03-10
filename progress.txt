@@ -8,6 +8,14 @@
 
 ---
 
+## 2026-03-11 - US-010
+- What was implemented: runCheck(cwd) in commands/check.ts — reads lockfile, re-hashes each source/output pair, reports source-changed/output-missing/output-modified diffs, prints summary, returns { inSync, diffs }
+- Files changed: src/commands/check.ts
+- **Learnings for future iterations:**
+  - CLI exit code 1 for not-inSync is handled in cli.ts (US-012), not in runCheck itself
+  - Missing source file during check is treated as 'source-changed' and continues to next entry
+---
+
 ## 2026-03-11 - US-009
 - What was implemented: runSync(cwd) in commands/sync.ts — calls runValidate() first (throws on errors), reads source files from ~/.agent-skills subdirs with gray-matter, calls writeCursorRules() and writeClaudeMd(), builds LockEntry records with hashFile() for each input→output pair, writes lockfile, prints summary
 - Files changed: src/commands/sync.ts
