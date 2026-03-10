@@ -8,6 +8,14 @@
 
 ---
 
+## 2026-03-11 - US-008
+- What was implemented: readLockfile() and writeLockfile() in src/lockfile.ts — reads/writes JSON with stable key order (sourcePath, sourceHash, outputPath, outputHash, timestamp), pretty-printed with 2-space indent, returns null on missing file
+- Files changed: src/lockfile.ts, tests/lockfile.test.ts
+- **Learnings for future iterations:**
+  - Stable key order achieved by constructing a new LockEntry object with explicit field order
+  - readLockfile returns null for any error (file not found, parse error) via catch-all
+---
+
 ## 2026-03-11 - US-007
 - What was implemented: writeClaudeMd() in adapters/claude.ts — filters sources by claude/all targets, builds delimited sections using <!-- agent-skills:start/end:<slug> --> tags, replaces existing sections or appends new ones, preserves all content outside delimiters
 - Files changed: src/adapters/claude.ts, tests/claude.test.ts
