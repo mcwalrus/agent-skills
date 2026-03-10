@@ -1,0 +1,18 @@
+## Codebase Patterns
+- ts-jest requires ts-node to parse jest.config.ts (add ts-node to devDependencies)
+- tsconfig uses module: NodeNext which causes ts-jest WARN about isolatedModules — not an error, tests pass
+- Empty TS files need `export {};` to be treated as modules under NodeNext
+
+# Ralph Progress Log
+Started: Wed Mar 11 12:18:42 NZDT 2026
+---
+
+## 2026-03-11 - US-001
+- Implemented full TypeScript project scaffold
+- Files changed: package.json, tsconfig.json, jest.config.ts, eslint.config.js, .prettierrc, .gitignore, src/types.ts, src/hasher.ts, src/lockfile.ts, src/cli.ts, src/index.ts, src/commands/{init,sync,check,validate,help}.ts, src/adapters/{cursor,claude}.ts, tests/{cursor,claude,lockfile,validate}.test.ts
+- **Learnings for future iterations:**
+  - ts-jest requires `ts-node` installed to parse jest.config.ts — add it to devDependencies
+  - tsconfig `module: NodeNext` causes ts-jest warnings about isolatedModules but tests still pass
+  - Empty TypeScript source files need `export {};` to satisfy NodeNext module requirements
+  - commander, gray-matter, js-yaml are runtime deps; typescript, jest, ts-jest, ts-node, eslint, prettier, @types/* are devDeps
+---
