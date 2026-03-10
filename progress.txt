@@ -3,7 +3,18 @@
 - Tests use Jest with ts-jest; test files in tests/ directory (not src/__tests__)
 - ts-jest warns about NodeNext module kind without isolatedModules; this is just a warning, not an error
 - Build uses `tsc` directly; dist/ contains compiled output
+- Commands scaffold files start with `export {};` placeholder — replace entirely when implementing
+- Use `fs.access()` in a try/catch to check file existence (no fs.existsSync in ESM)
 
+---
+
+## 2026-03-11 - US-003
+- What was implemented: runInit() function in commands/init.ts creating ~/.agent-skills/ with skills/, rules/, suggestions/ subdirs and config.json; also writes GUIDE.md when --guide is passed
+- Files changed: src/commands/init.ts
+- **Learnings for future iterations:**
+  - Command scaffold files start with `export {};` — replace entirely when implementing
+  - Use `fs.access()` in try/catch for file existence checks (ESM doesn't have `fs.existsSync` without the sync variant)
+  - Guide content for US-004 is already embedded in init.ts via the GUIDE_CONTENT constant; US-004 can just verify that behavior
 ---
 
 ## 2026-03-11 - US-002
