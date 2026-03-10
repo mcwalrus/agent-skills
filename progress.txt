@@ -8,6 +8,14 @@
 
 ---
 
+## 2026-03-11 - US-004
+- What was implemented: Verified that the --guide flag behavior was already fully implemented during US-003. GUIDE_CONTENT constant in init.ts covers all required sections (skills/rules/suggestions, source file format, Cursor .mdc format, Claude CLAUDE.md format, worked examples). No new code needed.
+- Files changed: prd.json (marked passes: true)
+- **Learnings for future iterations:**
+  - US-004 was implemented as part of US-003; check prior stories' implementations before writing new code
+  - The GUIDE.md --no-overwrite logic uses the same fs.access() try/catch pattern as config.json
+---
+
 ## 2026-03-11 - US-003
 - What was implemented: runInit() function in commands/init.ts creating ~/.agent-skills/ with skills/, rules/, suggestions/ subdirs and config.json; also writes GUIDE.md when --guide is passed
 - Files changed: src/commands/init.ts
