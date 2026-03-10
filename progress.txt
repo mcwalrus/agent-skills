@@ -8,6 +8,14 @@
 
 ---
 
+## 2026-03-11 - US-011
+- What was implemented: runHelp(command?) in commands/help.ts — prints summary of all commands when called with no arg, prints detailed help per-command when given a name, prints error for unknown commands
+- Files changed: src/commands/help.ts
+- **Learnings for future iterations:**
+  - help.ts uses a COMMANDS record keyed by name, each with description/flags/example/details fields
+  - No tests required for US-011 per acceptance criteria (typecheck only)
+---
+
 ## 2026-03-11 - US-010
 - What was implemented: runCheck(cwd) in commands/check.ts — reads lockfile, re-hashes each source/output pair, reports source-changed/output-missing/output-modified diffs, prints summary, returns { inSync, diffs }
 - Files changed: src/commands/check.ts
