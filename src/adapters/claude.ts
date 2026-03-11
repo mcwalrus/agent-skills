@@ -1,13 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { toKebabCase } from '../sourceFiles.js';
 import type { SourceFile } from '../types.js';
-
-function toKebabCase(filename: string): string {
-  return filename
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
-}
 
 function startTag(slug: string): string {
   return `<!-- agent-skills:start:${slug} -->`;

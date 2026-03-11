@@ -1,14 +1,8 @@
 import fs from 'fs/promises';
 import path from 'path';
 import yaml from 'js-yaml';
+import { toKebabCase } from '../sourceFiles.js';
 import type { SourceFile } from '../types.js';
-
-function toKebabCase(filename: string): string {
-  return filename
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
-}
 
 export async function writeCursorRules(sources: SourceFile[], outDir: string): Promise<string[]> {
   await fs.mkdir(outDir, { recursive: true });

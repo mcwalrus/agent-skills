@@ -1,0 +1,103 @@
+## Codebase Patterns
+- types.ts, hasher.ts, lockfile.ts are in src/ (not src/utils/)
+- Tests use Jest with ts-jest; test files in tests/ directory (not src/__tests__)
+- ts-jest warns about NodeNext module kind without isolatedModules; this is just a warning, not an error
+- Build uses `tsc` directly; dist/ contains compiled output
+- Commands scaffold files start with `export {};` placeholder — replace entirely when implementing
+- Use `fs.access()` in a try/catch to check file existence (no fs.existsSync in ESM)
+
+---
+
+## 2026-03-11 - US-012
+- What was implemented: cli.ts using commander — registers init/sync/check/validate/help subcommands with correct flags; index.ts re-exports all run* functions; build script updated to chmod +x dist/cli.js; TypeScript preserves shebang #!/usr/bin/env node
+- Files changed: src/cli.ts, src/index.ts, package.json
+- **Learnings for future iterations:**
+  - TypeScript (NodeNext) preserves the shebang line at the top of cli.ts — no separate postbuild sed step needed
+  - chmod +x appended to build script: `"build": "tsc && chmod +x dist/cli.js"`
+  - commander's `help [command]` syntax registers a subcommand that receives the command name as positional arg
+---
+
+## 2026-03-11 - US-011
+- What was implemented: runHelp(command?) in commands/help.ts — prints summary of all commands when called with no arg, prints detailed help per-command when given a name, prints error for unknown commands
+- Files changed: src/commands/help.ts
+- **Learnings for future iterations:**
+  - help.ts uses a COMMANDS record keyed by name, each with description/flags/example/details fields
+  - No tests required for US-011 per acceptance criteria (typecheck only)
+---
+
+## 2026-03-11 - US-010
+- What was implemented: runCheck(cwd) in commands/check.ts — reads lockfile, re-hashes each source/output pair, reports source-changed/output-missing/output-modified diffs, prints summary, returns { inSync, diffs }
+- Files changed: src/commands/check.ts
+- **Learnings for future iterations:**
+  - CLI exit code 1 for not-inSync is handled in cli.ts (US-012), not in runCheck itself
+  - Missing source file during check is treated as 'source-changed' and continues to next entry
+---
+
+## 2026-03-11 - US-009
+- What was implemented: runSync(cwd) in commands/sync.ts — calls runValidate() first (throws on errors), reads source files from ~/.agent-skills subdirs with gray-matter, calls writeCursorRules() and writeClaudeMd(), builds LockEntry records with hashFile() for each input→output pair, writes lockfile, prints summary
+- Files changed: src/commands/sync.ts
+- **Learnings for future iterations:**
+  - For CLAUDE.md lockfile entries, one entry per source file all pointing to the same outputPath is the convention
+- **Follow-up (done):** Extracted toKebabCase and readSourceFiles to shared src/sourceFiles.ts; sync.ts, cursor.ts, and claude.ts now import from there. Jest moduleNameMapper added so tests resolve sourceFiles.js → sourceFiles.ts.
+---
+
+## 2026-03-11 - US-008
+- What was implemented: readLockfile() and writeLockfile() in src/lockfile.ts — reads/writes JSON with stable key order (sourcePath, sourceHash, outputPath, outputHash, timestamp), pretty-printed with 2-space indent, returns null on missing file
+- Files changed: src/lockfile.ts, tests/lockfile.test.ts
+- **Learnings for future iterations:**
+  - Stable key order achieved by constructing a new LockEntry object with explicit field order
+  - readLockfile returns null for any error (file not found, parse error) via catch-all
+---
+
+## 2026-03-11 - US-007
+- What was implemented: writeClaudeMd() in adapters/claude.ts — filters sources by claude/all targets, builds delimited sections using <!-- agent-skills:start/end:<slug> --> tags, replaces existing sections or appends new ones, preserves all content outside delimiters
+- Files changed: src/adapters/claude.ts, tests/claude.test.ts
+- **Learnings for future iterations:**
+  - Section replace logic: find start/end tag indices, slice around them to replace in-place
+  - Append logic: normalize trailing newline before appending new section
+  - slug = kebab-case of basename without extension (same helper as cursor.ts)
+---
+
+## 2026-03-11 - US-006
+- What was implemented: writeCursorRules() in adapters/cursor.ts — filters sources by cursor/all targets, converts filename to kebab-case, serializes YAML frontmatter with js-yaml (description + alwaysApply: true), writes .mdc files to outDir (creating it if needed)
+- Files changed: src/adapters/cursor.ts, tests/cursor.test.ts
+- **Learnings for future iterations:**
+  - Test imports use bare module path (no .js extension) matching validate.test.ts pattern
+  - Tests use tmp dirs (os.tmpdir() + mkdtemp) and clean up in afterEach
+  - yaml.dump() for frontmatter produces "key: value\n" format; wrap with `---\n${fm}---\n` for .mdc files
+---
+
+## 2026-03-11 - US-005
+- What was implemented: runValidate() in commands/validate.ts — reads .md files from ~/.agent-skills/{skills,rules,suggestions}/, parses with gray-matter, checks for unknown keys, invalid type/targets values, missing targets (warning only), and empty body. Returns { valid, errors } where warnings don't affect valid flag.
+- Files changed: src/commands/validate.ts, tests/validate.test.ts
+- **Learnings for future iterations:**
+  - ValidationError warnings use `message.startsWith('Warning:')` convention to distinguish from real errors
+  - `fs.readdir` wrapped in try/catch returns [] when directory doesn't exist — safe for missing subdirs
+  - Tests write real files to ~/.agent-skills/skills/ and clean up after each test case
+---
+
+## 2026-03-11 - US-004
+- What was implemented: Verified that the --guide flag behavior was already fully implemented during US-003. GUIDE_CONTENT constant in init.ts covers all required sections (skills/rules/suggestions, source file format, Cursor .mdc format, Claude CLAUDE.md format, worked examples). No new code needed.
+- Files changed: prd.json (marked passes: true)
+- **Learnings for future iterations:**
+  - US-004 was implemented as part of US-003; check prior stories' implementations before writing new code
+  - The GUIDE.md --no-overwrite logic uses the same fs.access() try/catch pattern as config.json
+---
+
+## 2026-03-11 - US-003
+- What was implemented: runInit() function in commands/init.ts creating ~/.agent-skills/ with skills/, rules/, suggestions/ subdirs and config.json; also writes GUIDE.md when --guide is passed
+- Files changed: src/commands/init.ts
+- **Learnings for future iterations:**
+  - Command scaffold files start with `export {};` — replace entirely when implementing
+  - Use `fs.access()` in try/catch for file existence checks (ESM doesn't have `fs.existsSync` without the sync variant)
+  - Guide content for US-004 is already embedded in init.ts via the GUIDE_CONTENT constant; US-004 can just verify that behavior
+---
+
+## 2026-03-11 - US-002
+- What was implemented: Added hashString tests to validate.test.ts; types.ts and hasher.ts were already correctly implemented from scaffold
+- Files changed: tests/validate.test.ts
+- **Learnings for future iterations:**
+  - types.ts and hasher.ts were already fully implemented in the scaffold (US-001)
+  - validate.test.ts had a placeholder test that needed replacing with real hashString tests
+  - ts-jest gives a TS151002 warning about NodeNext module kind — this is expected and not blocking
+---
