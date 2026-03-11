@@ -41,7 +41,10 @@ describe('runValidate', () => {
   }
 
   it('returns valid: true and no real errors for a valid file', async () => {
-    await writeTestFile('test-valid.md', '---\ntype: skill\nname: Test Skill\ndescription: A test skill\ntargets: cursor\n---\n\nSome content here.');
+    await writeTestFile(
+      'test-valid.md',
+      '---\ntype: skill\nname: Test Skill\ndescription: A test skill\ntargets: cursor\n---\n\nSome content here.'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter(
       (e) => e.file.endsWith('test-valid.md') && !e.message.startsWith('Warning:')
@@ -51,15 +54,25 @@ describe('runValidate', () => {
   });
 
   it('reports error for unknown frontmatter key', async () => {
-    await writeTestFile('test-unknown-key.md', '---\ntype: skill\nname: Test\nunknownKey: bad\ntargets: cursor\n---\n\nContent.');
+    await writeTestFile(
+      'test-unknown-key.md',
+      '---\ntype: skill\nname: Test\nunknownKey: bad\ntargets: cursor\n---\n\nContent.'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter((e) => e.file.endsWith('test-unknown-key.md'));
-    expect(fileErrors.some((e) => e.message.includes('Unknown frontmatter key') && e.message.includes('unknownKey'))).toBe(true);
+    expect(
+      fileErrors.some(
+        (e) => e.message.includes('Unknown frontmatter key') && e.message.includes('unknownKey')
+      )
+    ).toBe(true);
     await removeTestFile('test-unknown-key.md');
   });
 
   it('reports error for invalid type value', async () => {
-    await writeTestFile('test-bad-type.md', '---\ntype: badtype\nname: Test\ntargets: cursor\n---\n\nContent.');
+    await writeTestFile(
+      'test-bad-type.md',
+      '---\ntype: badtype\nname: Test\ntargets: cursor\n---\n\nContent.'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter((e) => e.file.endsWith('test-bad-type.md'));
     expect(fileErrors.some((e) => e.message.includes('Invalid type value'))).toBe(true);
@@ -67,7 +80,10 @@ describe('runValidate', () => {
   });
 
   it('reports error for invalid targets value', async () => {
-    await writeTestFile('test-bad-targets.md', '---\ntype: skill\nname: Test\ntargets: both\n---\n\nContent.');
+    await writeTestFile(
+      'test-bad-targets.md',
+      '---\ntype: skill\nname: Test\ntargets: both\n---\n\nContent.'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter((e) => e.file.endsWith('test-bad-targets.md'));
     expect(fileErrors.some((e) => e.message.includes('Invalid targets value'))).toBe(true);
@@ -75,7 +91,10 @@ describe('runValidate', () => {
   });
 
   it('reports error for empty body', async () => {
-    await writeTestFile('test-empty-body.md', '---\ntype: skill\nname: Test\ntargets: cursor\n---\n');
+    await writeTestFile(
+      'test-empty-body.md',
+      '---\ntype: skill\nname: Test\ntargets: cursor\n---\n'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter((e) => e.file.endsWith('test-empty-body.md'));
     expect(fileErrors.some((e) => e.message.includes('body is empty'))).toBe(true);
@@ -83,7 +102,10 @@ describe('runValidate', () => {
   });
 
   it('reports warning (not error) for missing targets field', async () => {
-    await writeTestFile('test-missing-targets.md', '---\ntype: skill\nname: Test\n---\n\nContent here.');
+    await writeTestFile(
+      'test-missing-targets.md',
+      '---\ntype: skill\nname: Test\n---\n\nContent here.'
+    );
     const result = await runValidate();
     const fileErrors = result.errors.filter((e) => e.file.endsWith('test-missing-targets.md'));
     const warnings = fileErrors.filter((e) => e.message.startsWith('Warning:'));

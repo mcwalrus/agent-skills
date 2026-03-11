@@ -6,7 +6,7 @@ import { writeClaudeMd } from '../adapters/claude.js';
 import { hashFile } from '../hasher.js';
 import { writeLockfile } from '../lockfile.js';
 import { toKebabCase, readSourceFiles } from '../sourceFiles.js';
-import type { SourceFile, LockEntry } from '../types.js';
+import type { LockEntry } from '../types.js';
 
 export async function runSync(cwd: string): Promise<void> {
   const { valid, errors } = await runValidate();

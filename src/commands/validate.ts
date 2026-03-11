@@ -16,9 +16,7 @@ const VALID_TARGETS = new Set(['cursor', 'claude', 'all']);
 async function getMdFiles(dir: string): Promise<string[]> {
   try {
     const entries = await fs.readdir(dir);
-    return entries
-      .filter((e) => e.endsWith('.md'))
-      .map((e) => path.join(dir, e));
+    return entries.filter((e) => e.endsWith('.md')).map((e) => path.join(dir, e));
   } catch {
     return [];
   }
@@ -47,22 +45,34 @@ export async function runValidate(): Promise<{ valid: boolean; errors: Validatio
 
       // Invalid type value
       if (data.type !== undefined && !VALID_TYPES.has(data.type)) {
-        errors.push({ file: filePath, message: `Invalid type value: "${data.type}". Must be one of: skill, rule, suggestion` });
+        errors.push({
+          file: filePath,
+          message: `Invalid type value: "${data.type}". Must be one of: skill, rule, suggestion`,
+        });
       }
 
       // Invalid targets value
       if (data.targets !== undefined && !VALID_TARGETS.has(data.targets)) {
-        errors.push({ file: filePath, message: `Invalid targets value: "${data.targets}". Must be one of: cursor, claude, all` });
+        errors.push({
+          file: filePath,
+          message: `Invalid targets value: "${data.targets}". Must be one of: cursor, claude, all`,
+        });
       }
 
       // Missing targets warning (not error)
       if (data.targets === undefined) {
-        errors.push({ file: filePath, message: `Warning: missing targets field — file will be skipped during sync` });
+        errors.push({
+          file: filePath,
+          message: `Warning: missing targets field — file will be skipped during sync`,
+        });
       }
 
       // Empty body
       if (!content.trim()) {
-        errors.push({ file: filePath, message: 'File body is empty (no content beyond frontmatter)' });
+        errors.push({
+          file: filePath,
+          message: 'File body is empty (no content beyond frontmatter)',
+        });
       }
     }
   }

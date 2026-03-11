@@ -1,7 +1,11 @@
-const COMMANDS: Record<string, { description: string; flags: string; example: string; details: string }> = {
+const COMMANDS: Record<
+  string,
+  { description: string; flags: string; example: string; details: string }
+> = {
   init: {
     description: 'Initialize ~/.agent-skills/ directory with config and subdirectories',
-    flags: '--guide  Write GUIDE.md with format reference\n  --force  Overwrite existing config/GUIDE.md',
+    flags:
+      '--guide  Write GUIDE.md with format reference\n  --force  Overwrite existing config/GUIDE.md',
     example: 'agent-skills init --guide',
     details: `  agent-skills init [--guide] [--force]
 

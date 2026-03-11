@@ -53,7 +53,14 @@ describe('lockfile', () => {
     const keys = [...content.matchAll(/"(\w+)":/g)].map((m) => m[1]);
 
     // entries key first, then for each entry: sourcePath, sourceHash, outputPath, outputHash, timestamp
-    expect(keys).toEqual(['entries', 'sourcePath', 'sourceHash', 'outputPath', 'outputHash', 'timestamp']);
+    expect(keys).toEqual([
+      'entries',
+      'sourcePath',
+      'sourceHash',
+      'outputPath',
+      'outputHash',
+      'timestamp',
+    ]);
   });
 
   it('pretty-prints with 2-space indent', async () => {

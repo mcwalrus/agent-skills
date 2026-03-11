@@ -20,9 +20,7 @@ function buildSection(source: SourceFile): string {
 }
 
 export async function writeClaudeMd(sources: SourceFile[], claudeMdPath: string): Promise<void> {
-  const filtered = sources.filter(
-    (s) => s.targets === 'claude' || s.targets === 'all'
-  );
+  const filtered = sources.filter((s) => s.targets === 'claude' || s.targets === 'all');
 
   let existing = '';
   try {
