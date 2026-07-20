@@ -4,3 +4,6 @@ dist/
 staging/
 .idea/
 .vscode/
+
+.agents/
+skills-lock.json
