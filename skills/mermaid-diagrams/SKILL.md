@@ -88,24 +88,51 @@ for sequences). If a single diagram is getting unwieldy, split it.
 
 ### 3. Generate valid Mermaid
 
-Write the diagram in a fenced ` ```mermaid ` code block. Always verify the syntax
-mentally against the quick-reference rules before outputting. Common mistakes that
-break rendering:
+Write the diagram in a fenced ` ```mermaid ` code block. The most common mistakes
+that break rendering (full checklist in `references/validation.md`):
 
-- Using reserved words (`end`, `graph`, `subgraph`, `default`) as bare node IDs →
-  quote them: `A["end"]`
+- Reserved words as bare node IDs (`end`, `graph`, `class`, `subgraph`) → quote
+  them: `A["end"]`
 - Special chars in labels (`&`, `"`, `#`) → use HTML entities or avoid them
-- Architecture diagram: `architecture-beta` (not `architecture`) — same for
-  `radar-beta`, `sankey-beta`, `packet-beta`, `xychart-beta`
-- Flowchart direction in subgraphs is overridden by connections to outside nodes;
-  set direction on the parent or avoid cross-subgraph direction conflicts
-- `%%{init}%%` directives are deprecated since v10.5.0 — use YAML frontmatter
-  `config:` block instead
+- `-beta` types must use the exact keyword: `architecture-beta`, `radar-beta`,
+  `sankey-beta`, `packet-beta`, `xychart-beta`
+- Edge labels: use the pipe form `---|text|` — label-between-dashes `-- text ---`
+  is fragile
+- `%%{init}%%` directives are deprecated — use YAML frontmatter `config:` instead
+- `sequenceDiagram` has no `section` keyword — use `rect rgb(...)` for grouping
+- `stateDiagram-v2` (not v1)
 
 If the user's platform might not support newer diagram types (Packet v11.0+,
 Architecture v11.1+, Radar v11.6+), note a fallback (usually `flowchart`).
 
-### 4. Add context and explain choices
+### 4. Validate with the CLI
+
+After generating a diagram, tell the user how to validate it locally before
+committing. The authoritative validator is `mmdc` (the official Mermaid CLI —
+it runs the real parser, not a heuristic):
+
+```bash
+# Install once
+npm install -g @mermaid-js/mermaid-cli
+
+# Validate a file — if diagram.svg is produced, syntax is valid
+mmdc -i diagram.mmd -o diagram.svg
+
+# One-liner without a file (heredoc is handy for ad-hoc checks)
+mmdc -i - -o /tmp/check.svg << 'EOF'
+flowchart LR
+  A --> B
+EOF
+```
+
+**The signal is the output file**, not an exit code. No SVG = parse error; read
+stderr for `Parse error on line N:` with a column caret showing where the parser
+gave up.
+
+See `references/validation.md` for the full workflow: reading errors, per-diagram
+gotchas, the pre-flight checklist, and a CI GitHub Action.
+
+### 5. Add context and explain choices
 
 After each diagram:
 - Write a 1–2 sentence caption explaining what the reader should take away
@@ -131,40 +158,22 @@ These are battle-tested patterns for PR descriptions, ADRs, and RFCs. Load
 
 ---
 
-## Diagram type quick reference
+## Diagram options and documentation
 
-For syntax details, load `references/syntax.md`.
-For audience-specific examples (SWE / DevOps / Platform), load `references/audience-examples.md`.
+Load `references/diagram-options.md` when you need to look up a specific diagram
+type, check audience tags (SWE / DevOps / Platform P/S/R), or find the official
+doc link to share with the user.
 
-Key facts you'll use most often:
+Key resources:
+- **All 19 diagram types + doc links:** `references/diagram-options.md`
+- **GitHub repo:** https://github.com/mermaid-js/mermaid
+- **Live editor (zero-install):** https://mermaid.live
+- **Official docs root:** https://mermaid.js.org/syntax/
+- **Config / theming:** https://mermaid.js.org/config/configuration.html
 
-**Flowchart directions:** `TB` (top→bottom, default), `LR` (left→right), `BT`, `RL`
-
-**Flowchart node shapes:**
-```
-[rect]  (round)  ([stadium])  [(cylinder)]  ((circle))
-{diamond}  {{hexagon}}  [/parallelogram/]  >asym]
-```
-
-**Sequence arrows:** `->>` (solid arrow, most common), `-->>` (dashed), `<<->>` (bidirectional)
-
-**Sequence blocks:** `par/and/end` (concurrent), `alt/else/end` (conditional), `loop/end`, `opt/end`
-
-**State:** `[*] --> State : trigger` — use `stateDiagram-v2` (not v1)
-
-**Gantt tags:** `done`, `active`, `crit`, `milestone` — combine with `:id, start, duration`
-
-**Gitgraph:** `commit` → `branch name` → `checkout name` → `commit` → `checkout main` → `merge name`
-
-**C4 levels:** `C4Context` (system), `C4Container` (services), `C4Component` (internals)
-
-**classDef styling:**
-```mermaid
-flowchart LR
-  A:::new --> B:::existing
-  classDef new fill:#fff4dd,stroke:#aaa,color:#000
-  classDef existing fill:#ddf4ff,stroke:#aaa
-```
+When the user asks "what diagram types are available?" or "what can Mermaid do?",
+load `references/diagram-options.md` and give them the relevant subset for their
+use case — don't dump all 19 types at once.
 
 ---
 
@@ -194,6 +203,12 @@ on the interesting parts.
 
 Load these when you need them — don't load all at once:
 
-- `references/syntax.md` — Full syntax cheatsheet for all 19 diagram types
+- `references/diagram-options.md` — All 19 diagram types with use cases, audience
+  tags, and official documentation links
+- `references/validation.md` — CLI validation workflow (`mmdc`), error reading
+  guide, per-diagram gotchas, pre-flight checklist, CI setup
 - `references/patterns.md` — Worked examples of the 7 documentation patterns
-- `references/audience-examples.md` — SWE / DevOps / Platform examples by diagram type
+  (layered ownership, data flow, async fan-in, before/after, config evolution,
+  lifecycle, migration path)
+- `references/audience-examples.md` — Ready-to-adapt Mermaid snippets organized
+  by diagram type, tagged SWE / DevOps / Platform
