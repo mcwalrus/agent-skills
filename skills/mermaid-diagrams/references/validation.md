@@ -130,13 +130,64 @@ Run through this before committing a diagram:
 
 ---
 
+## Batch validation across a codebase
+
+When a repo has many `.md` files containing Mermaid blocks, use the bundled
+script to extract and validate all of them in one pass.
+
+**Requires `mmdc` — check first:**
+
+```bash
+which mmdc || echo "not installed"
+```
+
+If not installed, ask the user to run:
+
+```bash
+npm install -g @mermaid-js/mermaid-cli
+# Then, if Chromium is missing:
+npx puppeteer browsers install chrome
+```
+
+**Run the script:**
+
+```bash
+bash scripts/validate-diagrams.sh [directory]
+```
+
+- `directory` defaults to the current directory if omitted
+- Walks all `.md` files recursively, extracts every ` ```mermaid ` block, and
+  runs `mmdc` on each one
+- Reports failures with source file and line number of the opening fence
+- Exits non-zero if any block fails (suitable for CI)
+
+**Example output:**
+
+```
+Found 175 Mermaid block(s) — validating with mmdc...
+
+FAIL  ./docs/architecture.md:42
+      Error: Parse error on line 3:
+
+FAIL  ./docs/runbook.md:118
+      Error: Lexical error on line 5. Unrecognized text.
+
+Summary: 173 passed, 2 failed  (of 175 total)
+```
+
+Use this for one-off audits or as a CI step. For single-diagram checks, prefer
+the one-liner `mmdc -i - -o /tmp/check.svg` approach — the batch script spins
+up Chromium once per block and is slower.
+
+---
+
 ## CI validation
 
 ```yaml
 # GitHub Actions
 - run: npm install -g @mermaid-js/mermaid-cli
 - run: npx puppeteer browsers install chrome
-- name: Validate diagrams
+- name: Validate standalone .mmd files
   run: |
     for f in $(find docs -name '*.mmd'); do
       mmdc -i "$f" -o "${f%.mmd}.svg" || {
@@ -144,4 +195,9 @@ Run through this before committing a diagram:
         exit 1
       }
     done
+- name: Validate Mermaid blocks in .md files
+  run: bash scripts/validate-diagrams.sh docs
 ```
+
+The `validate-diagrams.sh` step uses the bundled script and exits non-zero on
+any failure, which fails the PR.

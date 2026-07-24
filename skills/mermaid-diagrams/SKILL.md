@@ -132,6 +132,20 @@ gave up.
 See `references/validation.md` for the full workflow: reading errors, per-diagram
 gotchas, the pre-flight checklist, and a CI GitHub Action.
 
+For validating **all Mermaid blocks across a codebase** (many `.md` files at
+once), use the bundled batch script — but only after confirming `mmdc` is
+available. If it's not, prompt the user to install it first:
+
+```bash
+# Check
+which mmdc || echo "Run: npm install -g @mermaid-js/mermaid-cli"
+
+# Batch validate (once mmdc is installed)
+bash scripts/validate-diagrams.sh [directory]
+```
+
+The script is at `scripts/validate-diagrams.sh` relative to the skill directory.
+
 ### 5. Add context and explain choices
 
 After each diagram:
@@ -205,8 +219,10 @@ Load these when you need them — don't load all at once:
 
 - `references/diagram-options.md` — All 19 diagram types with use cases, audience
   tags, and official documentation links
-- `references/validation.md` — CLI validation workflow (`mmdc`), error reading
-  guide, per-diagram gotchas, pre-flight checklist, CI setup
+- `references/validation.md` — CLI validation workflow (`mmdc`), batch script
+  usage, error reading guide, per-diagram gotchas, pre-flight checklist, CI setup
+- `scripts/validate-diagrams.sh` — Batch validator: extracts all Mermaid blocks
+  from `.md` files under a directory and runs `mmdc` on each; requires `mmdc`
 - `references/patterns.md` — Worked examples of the 7 documentation patterns
   (layered ownership, data flow, async fan-in, before/after, config evolution,
   lifecycle, migration path)
