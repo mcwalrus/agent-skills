@@ -4,6 +4,8 @@ dist/
 staging/
 .idea/
 .vscode/
+plans/
 
 .agents/
 skills-lock.json
+.obsidian/
