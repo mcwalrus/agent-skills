@@ -13,4 +13,14 @@ Before attempting the task, produce a short preparation checklist covering:
 4. **Pitfalls** — edge cases, ambiguities, or ways the task could be misread
 5. **Tools/resources needed** — and whether they're actually available
 
-Keep each point concrete and specific to the task at hand — generic boilerplate ("consider the requirements") defeats the purpose.
+Keep each point concrete and specific to the task at hand — generic boilerplate ("consider the requirements") defeats the purpose. Ask the user for their input your feedback for how tasks or ticket descriptions should be updated.
+
+Before updating tasks:
+
+1. **Missing information** - verify if approved
+2. **Hidden assumptions** - ask user only when significant
+3. **Sub-problems** - do not create work for the sake of work
+4. **Pitfalls** - include if relevant, or potentially destructive
+5. **Tools/resources needed** - include as approved
+
+Communicate any remaining risks held once task updates are completed
