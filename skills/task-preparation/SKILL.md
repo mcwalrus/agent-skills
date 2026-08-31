@@ -13,7 +13,7 @@ Before attempting the task, produce a short preparation checklist covering:
 4. **Pitfalls** — edge cases, ambiguities, or ways the task could be misread
 5. **Tools/resources needed** — and whether they're actually available
 
-Keep each point concrete and specific to the task at hand — generic boilerplate ("consider the requirements") defeats the purpose. Ask the user for their input your feedback for how tasks or ticket descriptions should be updated.
+Keep each point concrete and specific to the task at hand — generic boilerplate ("consider the requirements") defeats the purpose. Ask the user for their input your feedback for how tasks or ticket descriptions should be updated. Task updates might include _Add_, _Keep_, _Refine_ adjectives to describe what changes may apply.
 
 Before updating tasks:
 
