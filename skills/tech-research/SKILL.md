@@ -1,5 +1,5 @@
 ---
-name: tech-stack-research
+name: tech-research
 description: >
   Research technology stack solutions by scouring GitHub and the web for open-source
   libraries, reference implementations, and proprietary/SaaS alternatives. Use whenever
@@ -66,7 +66,7 @@ github <capability> production ready 2024 OR 2025
 **What to look for in results:**
 
 | Signal | What it means |
-|--------|---------------|
+| -------- | --------------- |
 | Stars (1k+) | Widely adopted |
 | Recent commits | Actively maintained |
 | Open issues ratio | Healthy community vs. abandoned |
@@ -91,6 +91,7 @@ best <problem domain> SaaS 2025
 ```
 
 Evaluate proprietary options on:
+
 - Pricing model (per-seat, usage-based, flat)
 - Vendor lock-in risk
 - Data sovereignty / compliance (relevant for NZ/AU contexts)
@@ -110,6 +111,7 @@ reddit.com <subreddit> best library for <problem>
 ```
 
 Also check:
+
 - The Pragmatic Engineer newsletter (for engineering tooling)
 - dev.to, lobste.rs for niche library discussions
 - GitHub Discussions on the major contenders
@@ -180,6 +182,7 @@ Any known gotchas for the integration.
 ## Research Quality Standards
 
 **DO:**
+
 - Fetch the actual README of top candidates, not just search snippets
 - Check when the last commit was — abandoned repos get noted
 - Look at the issues tab for common complaints
@@ -187,6 +190,7 @@ Any known gotchas for the integration.
 - Be honest about limitations of the recommended option
 
 **DO NOT:**
+
 - Recommend based on training data alone without searching
 - List every library found — curate to the top 4–6 that matter
 - Ignore licence implications (GPL vs MIT matters for commercial use)
@@ -198,23 +202,29 @@ Any known gotchas for the integration.
 ## Special Cases
 
 ### "Awesome list" exists
+
 If an `awesome-<domain>` curated list exists on GitHub, fetch it. These are
 community-maintained registries of the best tools in a space. Use them as a
 discovery layer, then go deeper on the top candidates.
 
 ### Greenfield vs. Brownfield
+
 If the user is adding to an existing stack (brownfield), weight compatibility
 and integration complexity more heavily than raw capability. The "best" library
 in isolation may be the wrong choice if it fights the existing architecture.
 
 ### NZ / AU context
+
 For users in New Zealand or Australia, flag:
+
 - Data residency options (AU/NZ data sovereignty)
 - Latency considerations (AP-Southeast vs US regions)
 - Whether the vendor has local presence or support
 
 ### Agent / AI workloads
+
 For agent infrastructure, prioritise:
+
 - MCP server availability (see BACKPRESSURE.md principle: attach inspection tools)
 - TypeScript / Python SDK quality (agent frameworks live and die by SDK quality)
 - Streaming support and structured output capabilities
@@ -225,6 +235,7 @@ For agent infrastructure, prioritise:
 ## Example Searches for Common Problem Types
 
 **Auth / Identity:**
+
 ```
 site:github.com authentication library nodejs stars:>2000
 "self-hosted auth" github.com 2025
@@ -232,6 +243,7 @@ site:news.ycombinator.com "auth" "self-hosted" 2024
 ```
 
 **Databases / Storage:**
+
 ```
 site:github.com embedded database <language>
 "serverless database" github.com edge
@@ -239,6 +251,7 @@ site:github.com embedded database <language>
 ```
 
 **Queues / Jobs:**
+
 ```
 site:github.com job queue <language> stars:>1000
 background jobs <framework> github
@@ -246,6 +259,7 @@ bullmq vs <alternative> 2025
 ```
 
 **Observability:**
+
 ```
 site:github.com opentelemetry <language> sdk
 self-hosted observability stack github
@@ -253,6 +267,7 @@ self-hosted observability stack github
 ```
 
 **AI / LLM tooling:**
+
 ```
 site:github.com LLM agent framework <language>
 MCP server <capability> github.com

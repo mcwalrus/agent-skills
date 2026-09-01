@@ -1,6 +1,6 @@
 ---
 name: ask-questions
-description:
+description: Generate questions that interrogate a plan, decision, or piece of research, without proposing solutions, summarising the plan back, or answering the questions. Use when the user wants their plan tested through questions rather than through critique, fixes, or a risk assessment. Trigger on phrases such as "interrogate this plan", or "ask me questions about this"
 ---
 
 # Objective
