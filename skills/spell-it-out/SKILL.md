@@ -1,88 +1,89 @@
 ---
 name: spell-it-out
-description: >
-  Produce an explicit, reviewable chain of reasoning events for understanding how a problem was identified or solved. Use when the user wants to see the thinking, audit how a conclusion was reached, or generate reviewable context — either prospectively while engaging with the problem or retrospectively after the fact. Trigger on "spell it out", "show your working", "show your reasoning", "walk me through your thinking", "trace your logic", "show me how you got there", or /spell-it-out. Do NOT trigger for root cause analysis on a specific failure — use 5whys for that. Do NOT trigger for stripping a problem to bedrock truths and rebuilding — use first-principles for that. Do NOT trigger for adversarial critique of a finished artefact — use critical-reviewer for that. Do NOT trigger for developing one idea through three mindsets — use three-rooms for that.
-user-invocable: true
+description: Produce a structured, chained reasoning trace that makes how a problem was framed, explored, and resolved explicit and reviewable. Use when the user asks to "spell it out", "show your working", "walk me through your reasoning", "trace your thinking", or wants a retrospective of how a problem was identified or solved. Use also when the agent itself wants to slow down and expose its reasoning before acting, or to make implicit assumptions reviewable.
 ---
 
 # Spell It Out
 
-Produce an explicit chain of reasoning events so the path from inputs to conclusion is auditable. The chain is the assessment — not the conclusion itself. Each step is one logical move, grounded in a prior step, a stated fact, or a flagged assumption. A reader should be able to follow the chain, challenge any link, and see exactly which links would have to give for the conclusion to give.
+Produce a **Reasoning Trace** — a written chain of reasoning events that someone (you, the user, a reviewer) can follow from start to finish without having to reconstruct the logic. The aim is reviewable context, not performance.
 
-The skill works in two modes and the output shape is the same in both:
+Use this skill when the work is non-trivial enough that the *how* matters, not just the *what*.
 
-- **Live** — engaging with a problem as it is being worked out. The chain is built as the reasoning happens.
-- **Retrospective** — after the fact. The chain is reconstructed from what was decided and done, including the dead ends that were rejected.
+## When to Use It
 
-The aim in both modes is the same: reviewable context for how the problem was understood and resolved.
+- The user explicitly asks you to spell out, show, or trace your reasoning.
+- A problem is being diagnosed or solved and the path matters as much as the answer.
+- You are about to make a non-obvious decision and want the choice to be defensible.
+- Retrospectively: looking back at work already done, to capture how a conclusion was reached.
+- Prospectively: at the start of a task, to make your framing visible before you commit to it.
 
-## Values
+Do **not** use it for trivial lookups, single-step commands, or where the reasoning is self-evident from the output.
 
-- **Trace over conclusion.** The path matters as much as the destination. A correct conclusion reached by an invisible chain is a worse outcome than a slightly less optimal conclusion reached visibly. The chain is the deliverable.
-- **One move per step.** Each reasoning event holds exactly one logical operation — observation, inference, deduction, comparison, hypothesis, ruling-out, or reframe. Bundling moves is how chains become opaque.
-- **Visible dependency.** Every step declares what it rests on: a prior step number, a stated fact, or a flagged assumption. If the dependency is not named, the step is unanchored.
-- **Honest gaps.** Where the reasoning jumps, say so. Where the chain could have forked, name the branch and what would have changed. Where a fact is assumed rather than verified, mark it. A clean-looking chain built on hidden leaps is worse than a chain that openly admits its gaps.
+## The Reasoning Trace
 
-## Constraints
+Structure the output in six sections. Be specific. Name things. Avoid filler.
 
-- Never collapse two reasoning events into a single step for brevity. Compression defeats the purpose.
-- Never state a step whose dependency is unclear. If a step's basis cannot be named, mark the step as **ungrounded** rather than smoothing over the gap.
-- Never hide assumptions inside claims. Assumptions get their own line and are flagged as such — distinct from facts.
-- Never produce a chain that arrives at a conclusion the chain does not actually support. If the conclusion outruns the chain, say so and mark the conclusion as provisional.
-- Never fabricate a step retroactively to make the chain look cleaner. Retrospective chains include the false starts, not just the path that worked.
-- Never use the chain to win an argument. The chain is for understanding, not persuasion.
+### 1. Frame
 
-## Workflow
+State the problem or question in your own words, as you currently understand it.
 
-1. **Frame the question.** State, in one line, what is being understood or decided. Sharpen it until a reader could tell whether the chain has answered it.
-2. **Inventory the inputs.** Separate *facts* (verifiable, named, with basis) from *assumptions* (taken for granted, flagged as such). The chain cannot rest on inputs that aren't visible.
-3. **Build the chain.** For each reasoning event, write:
-   - the *claim* — what is now believed or concluded at this step,
-   - the *basis* — what grounds it: a prior step number, a stated fact, or a named assumption,
-   - and the *operation* — the kind of move: observation, inference, deduction, comparison, hypothesis, ruling-out, reframe, etc.
-4. **Mark branch points.** Where the chain could have gone a different way, name the branch, what supported it, and what would have changed in the conclusion. Retrospective chains should also include branches that *were* taken and later abandoned.
-5. **State the conclusion.** What does the chain support, in one or two sentences. Then name the load-bearing steps — the ones whose removal would collapse the conclusion. If any load-bearing step is ungrounded, the conclusion is provisional.
+- What is being asked or solved?
+- What is *not* being asked? (Boundary.)
+- What would "done" look like?
 
-## Output Format
+### 2. Anchor
 
-A reasoning trace with these sections, in order. Each step in the chain has a fixed shape. Scale the number of steps to the problem; do not pad.
+Separate **observed** from **assumed**.
 
-### Question
+- What facts, outputs, tool results, or quotes do you actually have?
+- What are you taking for granted? Mark assumptions explicitly — they are the most common source of error.
+- What is unknown? List it. Empty unknowns are a smell.
 
-The thing being worked out. One line, sharpened until it is unambiguous. A vague question produces a vague chain.
+### 3. Chain
 
-### Inputs
+A numbered sequence of reasoning events. Each event must:
 
-**Facts** — verifiable statements the chain rests on. For each: what it is, and how it is known.
+- Reference what it follows from (previous event number, observation, or assumption).
+- State the new conclusion or move it produces.
+- Be one logical step — not a paragraph of leaps.
 
-**Assumptions** — taken-for-granted premises the chain rests on. Each is flagged as an assumption so a reader can choose to challenge it.
+Format each event as:
+> **[n] From <prior>: <what you did with it> → <new claim>.**
 
-### Chain
+If you skip a step, that is itself an event worth naming. Hidden jumps are the whole thing this skill exists to prevent.
 
-A numbered list. For each step:
+### 4. Branch Points
 
-```
-[N]. **Claim:** [what is now believed or concluded at this step]
-    **Basis:** [prior step number | stated fact | named assumption]
-    **Operation:** [observation | inference | deduction | comparison | hypothesis | ruling-out | reframe | …]
-```
+Identify moments where the chain could have gone differently.
 
-A step's basis must trace to a named anchor. If no anchor exists, mark the step **ungrounded** rather than fabricating one. Steps are numbered so dependencies can refer back by number.
+- What alternative did you consider?
+- Why did you pick the path you did?
+- What would change your mind?
 
-### Branches
+If there were no real branch points, say so — that is also useful information.
 
-Where the chain could have forked (live mode) or did fork and was abandoned (retrospective mode). For each:
+### 5. Resolve
 
-- **At step N**, the chain could have gone *alternative direction* because *what would have supported it*. If taken, the conclusion would have become *different outcome*.
+Your current best understanding or decision, in one or two sentences. This should be a *consequence* of the chain, not a restatement of the frame.
 
-### Conclusion
+### 6. Gaps
 
-What the chain supports, in one or two sentences. Then list the **load-bearing steps** — the numbered steps whose removal would collapse the conclusion. If any load-bearing step is marked ungrounded, the conclusion is provisional and that fact is stated here, not buried.
+What is still uncertain, unverified, or worth a second look.
 
-## Transitions
+- Be honest. A clean gap list is more useful than a confident-sounding resolve.
 
-- Once the assessment (the chain) is produced, invoke `/skill:plain-english` to render the trace for the reader. The chain's structure stays intact; the wording becomes accessible. Load the plain-english skill only after the assessment is complete, so the chain is not simplified mid-construction.
-- For root cause analysis on a specific failure, use `/5whys` instead — it converges on a single actionable cause, whereas this skill traces reasoning without forcing convergence.
-- For stripping a problem to bedrock truths and rebuilding from them, use `/first-principles` instead — it tests the *truth value* of premises, whereas this skill exposes the *logical path* from premises to conclusion.
-- For adversarial critique of a finished artefact, use `/critical-reviewer` instead — it attacks a draft, whereas this skill exposes a chain.
-- For developing a single idea through three mindsets in sequence, use `/three-rooms` instead — it separates dreaming, planning, and critique, whereas this skill produces a single auditable trace.
+## Style Rules
+
+- Short, declarative sentences. No hedging clouds.
+- Name your sources: "tool output X", "the user said Y", "I assumed Z because…".
+- If a step is an intuition, say so — do not dress it up as deduction.
+- If you realise mid-chain that an earlier step was wrong, stop, name the mistake, and restart the chain from the corrected step. Do not silently edit.
+
+## After the Trace
+
+Once the Reasoning Trace is written, hand it off to `/skill:plain-english` so the trace itself is rendered in clear, reviewable prose for the reader. The trace is the substance; plain English is the presentation. Continue as normal if the skill is not available in your harness.
+
+## Optional Modes
+
+- **Retrospective**: prepend "Looking back at…" and reconstruct the chain from evidence (commits, outputs, messages). Anchor heavily.
+- **In-the-moment**: write the trace as you go, appending events. Resolve only when the work is actually resolved — not before.
