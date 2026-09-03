@@ -1,6 +1,6 @@
 ---
 name: tidy-my-repo
-description: none
+description: Tidy up a local repository containing tasks at various stages of completion, plus miscellaneous files containing ideas — some relevant improvements, others unrelated to the repo's actual purpose. Trigger on explicit requests to "tidy up", "reorganise", or "clean up" a local repo/project folder.
 ---
 
 # Objective
