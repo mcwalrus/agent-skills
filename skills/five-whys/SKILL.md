@@ -1,5 +1,5 @@
 ---
-name: 5whys
+name: five-whys
 description: Five Whys root cause analysis. Iteratively asks "why" to drill past symptoms to underlying causes. Use for debugging, investigating failures, or understanding why something went wrong.
 ---
 
@@ -24,13 +24,17 @@ Restate the problem clearly and specifically.
 
 **Why Chain**
 
-| Level | Question | Answer |
-| ------- | ---------- | -------- |
-| 1 | Why did [problem]? | [Answer 1] |
-| 2 | Why did [Answer 1]? | [Answer 2] |
-| 3 | Why did [Answer 2]? | [Answer 3] |
-| 4 | Why did [Answer 3]? | [Answer 4] |
-| 5 | Why did [Answer 4]? | [Root Cause] |
+  > Why did [problem]?
+  > → [Answer 1]
+  >
+  > Why did [Answer 1]?
+  > → [Answer 2]
+  >
+  > Why did [Answer 2]?
+  > → [Answer 3]
+  >
+  > Why did [Answer 3]?
+  > → [Root Cause]
 
 **Root Cause**
 The fundamental issue identified. Explain why this is the root (not just another symptom).
@@ -58,3 +62,7 @@ How will you confirm the root cause is correct? (Test the hypothesis)
 Answer each Why clearly and list any immediate actions which can be taken, and any systemic
 risks which should be addressed. Provide source references the cause of systemic issues.
 Ask useful questions if you don't believe you have access to relevant context.
+
+## Early Exit
+
+You may cut short the chain of reasoning if either the root cause has been found with exhausted exploration. The skill should recommend to use appropriate tools which will gather effective context on the problem. If these tools have not been provided, state what context is missing and which skills would be beneficial.
