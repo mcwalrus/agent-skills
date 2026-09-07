@@ -40,7 +40,8 @@ Restate the problem clearly and specifically.
 The fundamental issue identified. Explain why this is the root (not just another symptom).
 
 **Branches** (if applicable)
-If multiple valid answers exist at any level, show the branching analysis.
+If multiple valid answers exist at any level, show the branching analysis which maybe
+represented as mermaid `flowchart TD` diagrams - aim to keep this simple in most cases.
 
 **Corrective Actions**
 
@@ -65,4 +66,7 @@ Ask useful questions if you don't believe you have access to relevant context.
 
 ## Early Exit
 
-You may cut short the chain of reasoning if either the root cause has been found with exhausted exploration. The skill should recommend to use appropriate tools which will gather effective context on the problem. If these tools have not been provided, state what context is missing and which skills would be beneficial.
+You may cut short the chain of reasoning if either the root cause has been found with
+exhausted exploration. The skill should recommend to use appropriate tools which will
+gather effective context on the problem. If these tools have not been provided, state
+what context is missing and which skills would be beneficial.
