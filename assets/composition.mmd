@@ -1,0 +1,17 @@
+%% Auto-generated from skills/composition.yaml — do not edit by hand.
+%% Regenerate with: node assets/render-composition.mjs
+graph LR
+  classDef pure fill:#e8f5e9,stroke:#4a7c4a,color:#1b3a1b;
+  classDef composite fill:#fff3e0,stroke:#a86b2c,stroke-width:2px,color:#5a3a14;
+  classDef cyclical fill:#ffebee,stroke:#c84a4a,stroke-width:3px,color:#5a1414;
+
+  critical-reviewer --> heresy-hunt
+  critical-reviewer --> backpressure
+  storyboard --> weave-ideas
+  storyboard --> three-rooms
+  walt-walk --> first-principles
+  walt-walk --> five-whys
+  walt-walk --> plain-english
+
+  class backpressure,first-principles,five-whys,heresy-hunt,plain-english,three-rooms,weave-ideas pure;
+  class critical-reviewer,storyboard,walt-walk composite;

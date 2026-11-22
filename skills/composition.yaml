@@ -1,0 +1,27 @@
+# Skill composition graph — source of truth.
+#
+# Format: <composite-skill>: [<constituent-skill>, <constituent-skill>, ...]
+# Lines starting with `#` are comments. Skill names must be lowercase
+# kebab-case and must exist as directories under skills/.
+#
+# Each skill is classified into one of three classes based on the graph:
+#
+#   pure       — no outgoing edges; the skill doesn't depend on others.
+#   composite  — has outgoing edges, and no cycle is reachable from it.
+#   cyclical   — has outgoing edges, and a cycle is reachable from it
+#                (e.g., a self-reference like `foo: [foo]`, or a longer
+#                cycle like `foo: [bar]` + `bar: [foo]`).
+#
+# Cycles are allowed; they are not validation errors. The class is inferred
+# from the graph structure, so you don't (and can't) declare it explicitly.
+# The generator (assets/render-composition.mjs) computes and styles each
+# class in the Mermaid output.
+#
+# Regenerate the diagram with:
+#   node assets/render-composition.mjs
+#
+# These entries are seed examples — replace with the real relationships.
+
+walt-walk: [first-principles, five-whys, plain-english]
+critical-reviewer: [heresy-hunt, backpressure]
+storyboard: [weave-ideas, three-rooms]
